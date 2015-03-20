@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chat App</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="chat">
+  		<input type="text" class="chat-name" placeholder="Enter Your name">
+  		<div class="chat-messages">
+  			<div class="chat-message">
+  				
+  			</div>
+  			<div class="chat-message">
+  				
+  			</div>
+  		</div>
+  		<textarea class="chat-textarea" placeholder="Type Your message"></textarea>
+  		<div class="chat-status">Status: <span>Idle</span></div>
+  </div>
+  <script src="http://127.0.0.1:3000/socket.io/socket.io.js"></script>
+  <script>
+    (function(){
+        var getNode = function(s){
+          return document.querySelector(s);
+        },
+        status=getNode('.chat-status')
+        textarea = getNode('.chat textarea'),
+        chatName = getNode('.chat-name'),
+        statusDefault = status.textContent,
+        setStatus=function(s){
+          status.textContent=s;
+        };
+        setStatus('Testing');
+
+        try{
+          var socket = io.connect('http://127.0.0.1:3000');
+        }catch(e){
+          //set the status to warn user
+        }
+
+        if(socket !== undefined){
+          console.log('Ok');
+          textarea.addEventListener('keydown', function(event){
+            var self = this,
+                name=chatName.value;
+                console.log(event.which);
+                if(event.which == 13 && event.shiftKey == false){
+                 socket.emit('input',{name:name, message:self.value})
+                }
+          });
+        }
+    })();
+  </script>
+</body>
+</html>
