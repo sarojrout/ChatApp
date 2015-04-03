@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+  <h2 style="color:#3facf9">Fantastic Chat App!!</h2>
   <div class="chat">
   		<input type="text" class="chat-name" placeholder="Enter Your name">
   		<div class="chat-messages">
@@ -17,7 +18,7 @@
   			</div>
   		</div>
   		<textarea class="chat-textarea" placeholder="Type Your message"></textarea>
-  		<div class="chat-status">Status: <span>Idle</span></div>
+  		<div class="chat-status">Status: <span style="color:#00ff66">Idle</span></div>
   </div>
   <script src="http://127.0.0.1:3000/socket.io/socket.io.js"></script>
   <script>
@@ -25,14 +26,21 @@
         var getNode = function(s){
           return document.querySelector(s);
         },
-        status=getNode('.chat-status')
-        textarea = getNode('.chat textarea'),
+        status=getNode('.chat-status span')
+        textarea = getNode('.chat-textarea'),
         chatName = getNode('.chat-name'),
+        messages= getNode('.chat-messages'),
         statusDefault = status.textContent,
         setStatus=function(s){
           status.textContent=s;
+          if(s !== statusDefault){
+            var delay = setTimeOut(function(){
+                setStatus(statusDefault);
+                clearInterval(delay);
+            }, 3000);
+          }
         };
-        setStatus('Testing');
+      //  setStatus('Testing');
 
         try{
           var socket = io.connect('http://127.0.0.1:3000');
@@ -42,12 +50,32 @@
 
         if(socket !== undefined){
           console.log('Ok');
+          socket.on('output',function(data){
+            console.log(data);
+            if(data.length){
+              //loop through result
+              for(var x =0; x< data.length; x=x+1){
+                var message = document.createElement('div');
+                message.setAttribute('class','.chat-message');
+                message.textContent = data[x].name + ': ' +data[x].message;
+                messages.appendChild(message);
+                messages.insertBefore(message,messages.firstChild);
+              }
+            }
+          });
+          socket.on('status', function(data){
+              setStatus((typeof data === 'object') ? data.message : data);
+              if(data.clear === true){
+                textarea.value = '';
+              }
+          });
           textarea.addEventListener('keydown', function(event){
             var self = this,
                 name=chatName.value;
                 console.log(event.which);
-                if(event.which == 13 && event.shiftKey == false){
-                 socket.emit('input',{name:name, message:self.value})
+                if(event.which === 13 && event.shiftKey === false){
+                  console.log('send!');
+                 socket.emit('input',{name:name, message:self.value});
                 }
           });
         }
