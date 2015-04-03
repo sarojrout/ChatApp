@@ -20,9 +20,9 @@ cp -R -n mongodb-osx-x86_64-3.0.1/ mongodb
 The MongoDB binaries are in the bin/ directory of the archive. To ensure that the binaries are in your PATH, you can modify your PATH.
 For example, you can add the following line to your shell’s rc file (e.g. ~/.bashrc):
 
-export PATH=<mongodb-install-directory>/bin:$PATH
+export PATH=mongodb-install-directory/bin:$PATH
 
-Replace <mongodb-install-directory> with the path to the extracted MongoDB archive.
+Replace mongodb-install-directory with the path to the extracted MongoDB archive.
 
 RUNNING MONGODB
 ==========================
@@ -39,7 +39,7 @@ Before running mongod for the first time, ensure that the user account running m
 
 3. Run MongoDB.
 
-<path to binary>/mongod
+Go to the bin directory of the mongo installation as ../bin/ And then type mongod
 
 4. Stop MongoDB
 
